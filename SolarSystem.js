@@ -109,27 +109,39 @@ function main() {
   var solarSystemNode = new Node();
   var earthOrbitNode = new Node();
   // earth orbit 100 units from the sun
-  earthOrbitNode.localMatrix = m4.translation(500, 0, 0);
+  earthOrbitNode.localMatrix = m4.translation(400, 0, 0);
 
   var moonOrbitNode = new Node();
   // moon 20 units from the earth
-  moonOrbitNode.localMatrix = m4.translation(50, 0, 0);
+  moonOrbitNode.localMatrix = m4.translation(30, 0, 0);
 
   var venusOrbitNode = new Node();
   venusOrbitNode.localMatrix = m4.translation(300, 0, 0);
 
   var mercuryOrbitNode = new Node();
-  mercuryOrbitNode.localMatrix = m4.translation(150, 0, 0);
+  mercuryOrbitNode.localMatrix = m4.translation(230, 0, 0);
 
   var marsOrbitNode = new Node();
-  marsOrbitNode.localMatrix = m4.translation(650, 0, 0);
+  marsOrbitNode.localMatrix = m4.translation(600, 0, 0);
+
+  var jupiterOrbitNode = new Node();
+  jupiterOrbitNode.localMatrix = m4.translation(800, 0, 0);
+
+  var saturnOrbitNode = new Node();
+  saturnOrbitNode.localMatrix = m4.translation(950, 0, 0);
+
+  var uranusOrbitNode = new Node();
+  uranusOrbitNode.localMatrix = m4.translation(1100, 0, 0);
+
+  var neptuneOrbitNode = new Node();
+  neptuneOrbitNode.localMatrix = m4.translation(1300, 0, 0);
 
   var sunNode = new Node();
-  sunNode.localMatrix = m4.scaling(5, 5, 5);  // sun a the center
+  sunNode.localMatrix = m4.scaling(8, 8, 8);  // sun a the center
   sunNode.drawInfo = {
     uniforms: {
-      u_colorOffset: [0.6, 0.6, 0, 1], // yellow
-      u_colorMult:   [0.4, 0.4, 0, 1],
+      u_colorOffset: [0.8, 0.5, 0, 1], // yellow
+      u_colorMult:   [0.6, 0.3, 0, 1],
     },
     programInfo: programInfo,
     bufferInfo: sphereBufferInfo,
@@ -139,11 +151,11 @@ function main() {
   var earthNode = new Node();
 
   // make the earth twice as large
-  earthNode.localMatrix = m4.scaling(2, 2, 2);   // make the earth twice as large
+  earthNode.localMatrix = m4.scaling(1, 1, 1);   // make the earth twice as large
   earthNode.drawInfo = {
     uniforms: {
-      u_colorOffset: [0.2, 0.5, 0.8, 1],  // blue-green
-      u_colorMult:   [0.8, 0.5, 0.2, 1],
+      u_colorOffset: [0.2, 0.2, 0.8, 1],  // blue-green
+      u_colorMult:   [0.2, 0.8, 0.2, 1],
     },
     programInfo: programInfo,
     bufferInfo: sphereBufferInfo,
@@ -151,7 +163,7 @@ function main() {
   };
 
   var moonNode = new Node();
-  moonNode.localMatrix = m4.scaling(0.4, 0.4, 0.4);
+  moonNode.localMatrix = m4.scaling(0.2, 0.2, 0.2);
   moonNode.drawInfo = {
     uniforms: {
       u_colorOffset: [0.6, 0.6, 0.6, 1],  // gray
@@ -163,11 +175,11 @@ function main() {
   };
 
   var venusNode = new Node();
-  venusNode.localMatrix = m4.scaling(1.8, 1.8, 1.8);
+  venusNode.localMatrix = m4.scaling(0.9, 0.9, 0.9);
   venusNode.drawInfo = {
     uniforms: {
       u_colorOffset: [0.9, 0.5, 0.1, 1],  // orange-brown
-      u_colorMult:   [0.1, 0.1, 0.1, 1],
+      u_colorMult:   [0.7, 0.5, 0.2, 1],
     },
     programInfo: programInfo,
     bufferInfo: sphereBufferInfo,
@@ -175,11 +187,11 @@ function main() {
   }
 
   var mercuryNode = new Node();
-  mercuryNode.localMatrix = m4.scaling(1, 1, 1);
+  mercuryNode.localMatrix = m4.scaling(0.5, 0.5, 0.5);
   mercuryNode.drawInfo = {
     uniforms: {
-      u_colorOffset: [0.6, 0.5, 0.2, 1],  // gray
-      u_colorMult:   [0.1, 0.1, 0.1, 1],
+      u_colorOffset: [0.5, 0.5, 0.5, 1],  // gray
+      u_colorMult:   [0.3, 0.5, 0.4, 1],
     },
     programInfo: programInfo,
     bufferInfo: sphereBufferInfo,
@@ -187,11 +199,59 @@ function main() {
   }
 
   var marsNode = new Node();
-  marsNode.localMatrix = m4.scaling(1.4, 1.4, 1.4);
+  marsNode.localMatrix = m4.scaling(0.7, 0.7, 0.7);
   marsNode.drawInfo = {
     uniforms: {
       u_colorOffset: [0.9, 0.1, 0.2, 1],  // red
-      u_colorMult:   [0.1, 0.1, 0.1, 1],
+      u_colorMult:   [0.8, 0.4, 0.4, 1],
+    },
+    programInfo: programInfo,
+    bufferInfo: sphereBufferInfo,
+    vertexArray: sphereVAO,
+  }
+
+  var jupiterNode = new Node();
+  jupiterNode.localMatrix = m4.scaling(3.5, 3.5, 3.5);
+  jupiterNode.drawInfo = {
+    uniforms: {
+      u_colorOffset: [0.6, 0.8, 0.3, 1],  
+      u_colorMult:   [0.3, 0.3, 0.2, 1],
+    },
+    programInfo: programInfo,
+    bufferInfo: sphereBufferInfo,
+    vertexArray: sphereVAO,
+  }
+
+  var saturnNode = new Node();
+  saturnNode.localMatrix = m4.scaling(2.3, 2.3, 2.3);
+  saturnNode.drawInfo = {
+    uniforms: {
+      u_colorOffset: [0.8, 0.6, 0.4, 1],  // red
+      u_colorMult:   [0.3, 0.3, 0.2, 1],
+    },
+    programInfo: programInfo,
+    bufferInfo: sphereBufferInfo,
+    vertexArray: sphereVAO,
+  }
+
+  var uranusNode = new Node();
+  uranusNode.localMatrix = m4.scaling(1.5, 1.5, 1.5);
+  uranusNode.drawInfo = {
+    uniforms: {
+      u_colorOffset: [0.1, 0.6, 0.3, 1],  
+      u_colorMult:   [0.1, 0.3, 0.2, 1],
+    },
+    programInfo: programInfo,
+    bufferInfo: sphereBufferInfo,
+    vertexArray: sphereVAO,
+  }
+
+  var neptuneNode = new Node();
+  neptuneNode.localMatrix = m4.scaling(1.5, 1.5, 1.5);
+  neptuneNode.drawInfo = {
+    uniforms: {
+      u_colorOffset: [0.1, 0.2, 0.8, 1], 
+      u_colorMult:   [0.1, 0.1, 0.6, 1],
     },
     programInfo: programInfo,
     bufferInfo: sphereBufferInfo,
@@ -210,6 +270,14 @@ function main() {
   mercuryNode.setParent(mercuryOrbitNode);
   marsOrbitNode.setParent(solarSystemNode);
   marsNode.setParent(marsOrbitNode);
+  jupiterOrbitNode.setParent(solarSystemNode);
+  jupiterNode.setParent(jupiterOrbitNode);
+  saturnOrbitNode.setParent(solarSystemNode);
+  saturnNode.setParent(saturnOrbitNode);
+  uranusOrbitNode.setParent(solarSystemNode);
+  uranusNode.setParent(uranusOrbitNode);
+  neptuneOrbitNode.setParent(solarSystemNode);
+  neptuneNode.setParent(neptuneOrbitNode);
 
   var objects = [
     sunNode,
@@ -218,6 +286,10 @@ function main() {
     venusNode,
     mercuryNode,
     marsNode,
+    jupiterNode,
+    saturnNode,
+    uranusNode,
+    neptuneNode,
   ];
 
   var objectsToDraw = [
@@ -227,6 +299,10 @@ function main() {
     venusNode.drawInfo,
     mercuryNode.drawInfo,
     marsNode.drawInfo,
+    jupiterNode.drawInfo,
+    saturnNode.drawInfo,
+    uranusNode.drawInfo,
+    neptuneNode.drawInfo,
   ];
 
   requestAnimationFrame(drawScene);
@@ -281,7 +357,7 @@ function main() {
     });
 
     // Compute the camera's matrix using look at.
-    var cameraPosition = [0 + a, -800 + b, 0 + c];      // posição da camera em relação ao sol
+    var cameraPosition = [0 + a, -1000 + b, 0 + c];      // posição da camera em relação ao sol
     var target = [0, 0, 0];
     var up = [0, 0, 1];
     var cameraMatrix = m4.lookAt(cameraPosition, target, up);
@@ -297,6 +373,10 @@ function main() {
     m4.multiply(m4.yRotation(0.0062), venusOrbitNode.localMatrix, venusOrbitNode.localMatrix);
     m4.multiply(m4.yRotation(0.0024), mercuryOrbitNode.localMatrix, mercuryOrbitNode.localMatrix);
     m4.multiply(m4.yRotation(0.0188), marsOrbitNode.localMatrix, marsOrbitNode.localMatrix);
+    m4.multiply(m4.yRotation(0.0008), jupiterOrbitNode.localMatrix, jupiterOrbitNode.localMatrix);
+    m4.multiply(m4.yRotation(0.0003), saturnOrbitNode.localMatrix, saturnOrbitNode.localMatrix);
+    m4.multiply(m4.yRotation(0.0002), uranusOrbitNode.localMatrix, uranusOrbitNode.localMatrix);
+    m4.multiply(m4.yRotation(0.0001), neptuneOrbitNode.localMatrix, neptuneOrbitNode.localMatrix);
 
     // spin the sun
     m4.multiply(m4.yRotation(0.005), sunNode.localMatrix, sunNode.localMatrix);
@@ -310,6 +390,14 @@ function main() {
     m4.multiply(m4.yRotation(0.05), mercuryNode.localMatrix, mercuryNode.localMatrix);
     // spin the mars
     m4.multiply(m4.yRotation(0.05), marsNode.localMatrix, marsNode.localMatrix);
+    // spin the jupiter
+    m4.multiply(m4.yRotation(0.05), jupiterNode.localMatrix, jupiterNode.localMatrix);
+    // spin the saturn
+    m4.multiply(m4.yRotation(0.05), saturnNode.localMatrix, saturnNode.localMatrix);
+    // spin the uranus
+    m4.multiply(m4.yRotation(0.05), uranusNode.localMatrix, uranusNode.localMatrix);
+    // spin the neptune
+    m4.multiply(m4.yRotation(0.05), neptuneNode.localMatrix, neptuneNode.localMatrix);
 
     // Update all world matrices in the scene graph
     solarSystemNode.updateWorldMatrix();
