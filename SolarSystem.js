@@ -34,6 +34,7 @@ void main() {
 }
 `;
 
+
 var Node = function() {
   this.children = [];
   this.localMatrix = m4.identity();
@@ -82,6 +83,31 @@ let lastMouseY = 0;
 var eixoX = 0;
 var eixoY = 0;
 var eixoZ = 0;
+
+// Ler arquivos com as posições dos planetas
+
+async function carregarTrajetoria(nomeArquivo) {
+  const resposta = await fetch(nomeArquivo);
+  const texto = await resposta.text();
+  const linhas = texto.trim().split("\n");
+
+  const posicoes = [];
+
+  for (const linha of linhas) {
+    const partes = linha.trim().split(/\s+/);
+    if (partes.length >= 6) {
+      const x = parseFloat(partes[3]) * 400;
+      const y = parseFloat(partes[4]) * 400;
+      const z = parseFloat(partes[5]) * 400;
+      if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+        posicoes.push({ x, y, z });
+      }
+    }
+  }
+  return posicoes;
+}
+
+let earthPositions = await carregarTrajetoria("Dados/Earth.txt");
 
 function main() {
   // Get A WebGL context
@@ -447,7 +473,16 @@ function main() {
     var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
 
     // update the local matrices for each object.
-    m4.multiply(m4.yRotation(0.01), earthOrbitNode.localMatrix, earthOrbitNode.localMatrix);  // velocidade rotação da terra em torno da lua
+    //m4.multiply(m4.yRotation(0.01), earthOrbitNode.localMatrix, earthOrbitNode.localMatrix);  // velocidade rotação da terra em torno da lua
+
+    
+    if (earthPositions.length > 0) {
+  const earthIndex = Math.floor((time * 24) % earthPositions.length);
+  const pos = earthPositions[earthIndex];
+  earthOrbitNode.localMatrix = m4.translation(pos.x, pos.y, pos.z);
+}
+
+
     m4.multiply(m4.yRotation(0.1), moonOrbitNode.localMatrix, moonOrbitNode.localMatrix);
     m4.multiply(m4.yRotation(0.0062), venusOrbitNode.localMatrix, venusOrbitNode.localMatrix);
     m4.multiply(m4.yRotation(0.0024), mercuryOrbitNode.localMatrix, mercuryOrbitNode.localMatrix);
