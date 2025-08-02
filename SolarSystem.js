@@ -72,9 +72,16 @@ Node.prototype.updateWorldMatrix = function(matrix) {
   });
 };
 
-var a = 3;
-var b = 3;
-var c = 3;
+// variaveis para controlar a camera
+let cameraAngleX = 0;
+let cameraAngleY = 0;
+let isDragging = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+
+var eixoX = 0;
+var eixoY = 0;
+var eixoZ = 0;
 
 function main() {
   // Get A WebGL context
@@ -85,11 +92,57 @@ function main() {
     return;
   }
 
+  // função para criar órbita
+  function createOrbitBufferInfo(gl, radius) {
+    const positions = [];
+    for (let i = 0; i <= 100; ++i) {      // divide o circulo da orbita em partes 
+      const angle = (i / 100) * Math.PI * 2;
+      positions.push(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+    }
+    return twgl.createBufferInfoFromArrays(gl, {position: { numComponents: 3, data: positions },});
+  }
+ 
+  // eventos da camera
+    canvas.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      const dx = e.clientX - lastMouseX;
+      const dy = e.clientY - lastMouseY;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+
+      cameraAngleY += dx * 0.005; // valor para a sensibilidade
+      cameraAngleX += dy * 0.005; // valor para a sensibilidade
+      cameraAngleX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, cameraAngleX));
+    }
+  });
+
   // Tell the twgl to match position with a_position, n
   // normal with a_normal etc..
   twgl.setAttributePrefix("a_");
 
   var sphereBufferInfo = flattenedPrimitives.createSphereBufferInfo(gl, 10, 36, 60); // ( gl , escala , numero de lados das esferas , resolução )
+
+  // órbitas
+  const orbitBuffers = {
+  earth: createOrbitBufferInfo(gl, 400),
+  venus: createOrbitBufferInfo(gl, 300),
+  mercury: createOrbitBufferInfo(gl, 230),
+  mars: createOrbitBufferInfo(gl, 600),
+  jupiter: createOrbitBufferInfo(gl, 800),
+  saturn: createOrbitBufferInfo(gl, 950),
+  uranus: createOrbitBufferInfo(gl, 1100),
+  neptune: createOrbitBufferInfo(gl, 1300),
+};
 
   // setup GLSL program
   var programInfo = twgl.createProgramInfo(gl, [vs, fs]);
@@ -108,11 +161,11 @@ function main() {
   // Let's make all the nodes
   var solarSystemNode = new Node();
   var earthOrbitNode = new Node();
-  // earth orbit 100 units from the sun
+  // earth orbit 400 units from the sun
   earthOrbitNode.localMatrix = m4.translation(400, 0, 0);
 
   var moonOrbitNode = new Node();
-  // moon 20 units from the earth
+  // moon 30 units from the earth
   moonOrbitNode.localMatrix = m4.translation(30, 0, 0);
 
   var venusOrbitNode = new Node();
@@ -305,6 +358,25 @@ function main() {
     neptuneNode.drawInfo,
   ];
 
+//desenhando as órbitas
+  function drawOrbit(gl, bufferInfo, viewProjectionMatrix, color) {
+  const uniforms = {
+    u_matrix: viewProjectionMatrix,
+    u_colorMult: [0, 0, 0, 1],     // preto
+    u_colorOffset: color || [1, 1, 1, 1],  // branco por padrão
+  };
+
+  const orbitProgramInfo = programInfo;
+
+  twgl.setBuffersAndAttributes(gl, orbitProgramInfo, bufferInfo);
+  twgl.setUniforms(orbitProgramInfo, uniforms);
+  gl.useProgram(orbitProgramInfo.program);
+  gl.bindVertexArray(null);
+  gl.bindVertexArray(bufferInfo.vertexArray);
+  gl.drawArrays(gl.LINE_STRIP, 0, bufferInfo.numElements);
+}
+
+
   requestAnimationFrame(drawScene);
 
   // Draw the scene.
@@ -329,37 +401,44 @@ function main() {
         m4.perspective(fieldOfViewRadians, aspect, 1, 2000);
 
     document.addEventListener('keydown', function(event) {
-      if (event.key === 'w') {
-        // Ação a ser executada quando "w" é pressionado
-        b += 0.01;
-      }
-      if (event.key === 's') {
-        // Ação a ser executada quando "s" é pressionado
-        b -= 0.01;
-      }
-      if (event.key === 'a') {
-        // Ação a ser executada quando "a" é pressionado
-        a += 0.01;
-      }
-      if (event.key === 'd') {
-        // Ação a ser executada quando "d" é pressionado
-        a -= 0.01;
-      }
       if (event.key === 'q') {
         // Ação a ser executada quando "q" é pressionado
-        c += 0.01;
+        eixoZ += 0.01;
       }
       if (event.key === 'e') {
         // Ação a ser executada quando "e" é pressionado
-        c -= 0.01;
+        eixoZ -= 0.01;
       }
-
+      if (event.key === 'd') {
+        // Ação a ser executada quando "d" é pressionado
+        eixoX += 0.01;
+      }
+      if (event.key === 'a') {
+        // Ação a ser executada quando "a" é pressionado
+        eixoX -= 0.01;
+      }
+      if (event.key === 'w') {
+        // Ação a ser executada quando "w" é pressionado
+        eixoY += 0.01;
+      }
+      if (event.key === 's') {
+        // Ação a ser executada quando "s" é pressionado
+        eixoY -= 0.01;
+      }
     });
 
+    // Atualiza posição da camera com base nos angulos
+    const radius = 1000;
+    const x = radius * Math.cos(cameraAngleX) * Math.sin(cameraAngleY);
+    const y = radius * Math.sin(cameraAngleX);
+    const z = radius * Math.cos(cameraAngleX) * Math.cos(cameraAngleY); 
+
+
     // Compute the camera's matrix using look at.
-    var cameraPosition = [0 + a, -1000 + b, 0 + c];      // posição da camera em relação ao sol
-    var target = [0, 0, 0];
-    var up = [0, 0, 1];
+    // posição da camera em relação ao sol
+    var cameraPosition = [x, y, z];
+    var target = [eixoX, eixoY, eixoZ];  // para onde a camera está olhando
+    var up = [0, 1, 0];
     var cameraMatrix = m4.lookAt(cameraPosition, target, up);
 
     // Make a view matrix from the camera matrix.
@@ -408,6 +487,16 @@ function main() {
     });
 
     // ------ Draw the objects --------
+
+    drawOrbit(gl, orbitBuffers.earth, viewProjectionMatrix, [0.2, 0.2, 1, 1]);     // Azul
+drawOrbit(gl, orbitBuffers.venus, viewProjectionMatrix, [1.0, 0.5, 0.2, 1]);   // Laranja
+drawOrbit(gl, orbitBuffers.mercury, viewProjectionMatrix, [0.7, 0.7, 0.7, 1]); // Cinza
+drawOrbit(gl, orbitBuffers.mars, viewProjectionMatrix, [1.0, 0.1, 0.2, 1]);    // Vermelho
+drawOrbit(gl, orbitBuffers.jupiter, viewProjectionMatrix, [0.9, 0.9, 0.5, 1]); // Amarelado
+drawOrbit(gl, orbitBuffers.saturn, viewProjectionMatrix, [0.9, 0.8, 0.6, 1]);  // Bege
+drawOrbit(gl, orbitBuffers.uranus, viewProjectionMatrix, [0.5, 1.0, 1.0, 1]);  // Azul claro
+drawOrbit(gl, orbitBuffers.neptune, viewProjectionMatrix, [0.3, 0.3, 1.0, 1]); // Azul escuro
+
 
     twgl.drawObjectList(gl, objectsToDraw);
 
