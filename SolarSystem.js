@@ -23,11 +23,16 @@ in vec2 v_texcoord;
 
 uniform sampler2D u_texture;
 uniform vec4 u_color;
+uniform bool u_useTexture; 
 
 out vec4 outColor;
 
 void main() {
+  if (u_useTexture) {
     outColor = texture(u_texture, v_texcoord);
+  } else {
+    outColor = u_color;
+  }
 }
 `;
 
@@ -64,14 +69,14 @@ Node.prototype.updateWorldMatrix = function(matrix) {
   });
 };
 
-// variaveis para controlar a camera
+// para camera
 let cameraAngleX = 0;
 let cameraAngleY = 0;
 let isDragging = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
 
-// Variáveis para controlar o tempo da animação
+// tempo de animação
 let time = 0;
 let timeFactor = 1.0;
 let isPaused = false;
@@ -190,6 +195,7 @@ function main() {
 
   const matrixUniformLocation = gl.getUniformLocation(programInfo.program, 'u_matrix');
   const colorUniformLocation = gl.getUniformLocation(programInfo.program, 'u_color');
+  const useTextureUniformLocation = gl.getUniformLocation(programInfo.program, 'u_useTexture'); 
 
   function degToRad(d) {
     return d * Math.PI / 180;
@@ -326,10 +332,7 @@ function main() {
   var voyager1Node = new Node();
   voyager1Node.localMatrix = m4.scaling(0.3, 0.3, 0.3);
   voyager1Node.drawInfo = {
-    uniforms: {
-      u_colorOffset: [0.1, 0.2, 0.8, 1],
-      u_colorMult:   [0.1, 0.1, 0.6, 1],
-    },
+    uniforms: { u_texture: voyager1Texture, },
     programInfo: programInfo,
     bufferInfo: sphereBufferInfo,
     vertexArray: sphereVAO,
@@ -387,67 +390,67 @@ function main() {
           programInfo: programInfo,
           vertexArray: mercuryOrbit.vertexArray,
           bufferInfo: mercuryOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.3, 0.1, 0.4, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: venusOrbit.vertexArray,
           bufferInfo: venusOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.6, 0.1, 0.3, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: earthOrbit.vertexArray,
           bufferInfo: earthOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.6, 0.3, 0.1, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: moonOrbit.vertexArray,
           bufferInfo: moonOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.7, 0.5, 0.3, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: marsOrbit.vertexArray,
           bufferInfo: marsOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.2, 0.5, 0.2, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: jupiterOrbit.vertexArray,
           bufferInfo: jupiterOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.6, 0.1, 0.5, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: saturnOrbit.vertexArray,
           bufferInfo: saturnOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.5, 0.7, 0.2, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: uranusOrbit.vertexArray,
           bufferInfo: uranusOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.3, 0.6, 0.6, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: neptuneOrbit.vertexArray,
           bufferInfo: neptuneOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.7, 0.7, 0.2, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: plutoOrbit.vertexArray,
           bufferInfo: plutoOrbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.1, 0.5, 0.1, 1], u_texture: null },
       },
       {
           programInfo: programInfo,
           vertexArray: voyager1Orbit.vertexArray,
           bufferInfo: voyager1Orbit.bufferInfo,
-          uniforms: { u_color: [0.5, 0.5, 0.5, 1], u_texture: null },
+          uniforms: { u_color: [0.7, 0.2, 0.3, 1], u_texture: null },
       },
   ];
 
@@ -589,6 +592,10 @@ function main() {
     const currentVoyagerIndex = currentTimeIndex % voyager1Positions.length;
     if (voyager1Positions.length > 0) {
       const pos = voyager1Positions[currentVoyagerIndex];
+      if(elementoSelecionado == 'voyager1'){
+        cameraPosition = [x + pos.x, y + pos.y, z + pos.z];
+        target = [pos.x, pos.y, pos.z];
+      }
       voyager1OrbitNode.localMatrix = m4.translation(pos.x, pos.y, pos.z);
     }
 
@@ -614,19 +621,20 @@ function main() {
     
     // Desenhar órbitas
     gl.useProgram(programInfo.program);
-    orbitsToDraw.forEach(o => {
-    // Usa a localização do uniforme obtida anteriormente
-    gl.uniformMatrix4fv(matrixUniformLocation, false, viewProjectionMatrix);
-    gl.uniform4fv(colorUniformLocation, o.uniforms.u_color);
-    gl.bindVertexArray(o.vertexArray);
-    gl.drawArrays(gl.LINE_LOOP, 0, o.bufferInfo.numElements);
+orbitsToDraw.forEach(o => {
+  gl.uniform1i(useTextureUniformLocation, false); 
+  gl.uniformMatrix4fv(matrixUniformLocation, false, viewProjectionMatrix);
+  gl.uniform4fv(colorUniformLocation, o.uniforms.u_color);
+  gl.bindVertexArray(o.vertexArray);
+  gl.drawArrays(gl.LINE_STRIP, 0, o.bufferInfo.numElements);
 });
 
-    objects.forEach(function(object) {
-        object.drawInfo.uniforms.u_matrix = m4.multiply(viewProjectionMatrix, object.worldMatrix);
-    });
+objects.forEach(function(object) {
+  object.drawInfo.uniforms.u_matrix = m4.multiply(viewProjectionMatrix, object.worldMatrix);
+  object.drawInfo.uniforms.u_useTexture = true; 
+});
 
-    twgl.drawObjectList(gl, objectsToDraw);
+twgl.drawObjectList(gl, objectsToDraw);
 
     requestAnimationFrame(drawScene);
   }
