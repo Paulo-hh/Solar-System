@@ -479,14 +479,26 @@ function main() {
     var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     var projectionMatrix = m4.perspective(fieldOfViewRadians, aspect, 1, 2000);
 
-    const radius = 200;
+    let opcaoSelecionada = document.getElementById('verPlaneta');
+    let elementoSelecionado = opcaoSelecionada.value;
+    let radius = 120;
+
+    if(elementoSelecionado == 'mercury'){ radius = 30;} 
+    if(elementoSelecionado == 'venus'){ radius = 40;} 
+    if(elementoSelecionado == 'earth'){ radius = 40;} 
+    if(elementoSelecionado == 'mars'){ radius = 40;} 
+    if(elementoSelecionado == 'moon'){ radius = 40;} 
+    if(elementoSelecionado == 'uranus'){ radius = 50;} 
+    if(elementoSelecionado == 'neptune'){ radius = 50;} 
+    if(elementoSelecionado == 'pluto'){ radius = 30;} 
+    if(elementoSelecionado == 'voyager-1'){ radius = 30;} 
+
+
     const x = radius * Math.cos(cameraAngleX) * Math.sin(cameraAngleY);
     const y = radius * Math.sin(cameraAngleX);
     const z = radius * Math.cos(cameraAngleX) * Math.cos(cameraAngleY);
 
     var cameraPosition = [x, y, z];
-    let opcaoSelecionada = document.getElementById('verPlaneta');
-    let elementoSelecionado = opcaoSelecionada.value;
     var target = [0, 0, 0];
 
     const currentEarthIndex = currentTimeIndex % earthPositions.length;
