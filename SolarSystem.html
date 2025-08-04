@@ -1,9 +1,69 @@
-<canvas id="canvas"></canvas>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Sistema Solar</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    #canvas {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+    #ui {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+      font-family: sans-serif;
+    }
+    #ui select, #ui input, #ui button {
+      margin: 5px;
+    }
+    #timeSliderContainer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
 
-<script src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
-<script src="https://webgl2fundamentals.org/webgl/resources/m4.js"></script>
-<script src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
-
-<script type="module" src="SolarSystem.js"></script>
-<link rel="stylesheet" href="SolarSystem.css">
+  <div id="ui">
+    <label for="verPlaneta">Ver Planeta:</label>
+    <select id="verPlaneta" name="planetas">
+      <option value="sun">Sun</option>
+      <option value="mercury">Mercury</option>
+      <option value="venus">Venus</option>
+      <option value="earth">Earth</option>
+      <option value="moon">Moon</option>
+      <option value="mars">Mars</option>
+      <option value="jupiter">Jupiter</option>
+      <option value="saturn">Saturn</option>
+      <option value="uranus">Uranus</option>
+      <option value="neptune">Neptune</option>
+      <option value="pluto">Pluto</option>
+      <option value="voyager1">Voyager-1</option>
+    </select>
     
+    <div id="timeSliderContainer">
+      <button id="playPauseButton">Pausar</button>
+      <input type="range" id="timeSlider" min="0" max="1000" value="0">
+      <label for="speedSlider">Velocidade:</label>
+      <input type="range" id="speedSlider" min="0.1" max="5.0" step="0.1" value="1.0">
+    </div>
+  </div>
+
+  <script src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
+  <script src="https://webgl2fundamentals.org/webgl/resources/m4.js"></script>
+  <script src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
+  <script type="module" src="SolarSystem.js"></script>
+</body>
+</html>
